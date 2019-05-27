@@ -184,6 +184,27 @@ See
 .BR openat (2)
 for an explanation of the need for
 .BR linkat ().
+.TP
+.BR AT_ATOMIC_DATA " (since Linux 5.x)"
+A filesystem which accepts this flag will guarantee that if the linked file
+name exists after a system crash, then all of the data written to the file
+and all of the file's metadata at the time of the linkat(2) call will be
+visible.
+
+The way to achieve this guarantee on old kernels is to call
+.BR fsync (2)
+before linking the file, but doing so will also results in flushing of
+volatile disk caches.
+
+A filesystem which accepts this flag does
+.BR NOT
+guarantee that any of the file hardlinks will exist after a system crash,
+nor that the last observed value of
+.I st_nlink
+(see
+.BR stat (2))
+will persist.
+.TP
 .SH RETURN VALUE
 On success, zero is returned.
 On error, \-1 is returned, and
