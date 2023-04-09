@@ -166,8 +166,8 @@ An additional record of type
 encapsulates the information about the object and is included alongside the
 generic event metadata structure.
 The file descriptor that is used to represent the object correlated to an
-event is instead substituted with a file handle.
-It is intended for applications that may find the use of a file handle to
+event is instead substituted with a file id.
+It is intended for applications that may find the use of a file id to
 identify an object more suitable than a file descriptor.
 Additionally, it may be used for applications monitoring a directory or a
 filesystem that are interested in the directory entry modification events
@@ -182,7 +182,7 @@ or in events such as
 and
 .BR FAN_MOVE_SELF .
 All the events above require an fanotify group that identifies filesystem
-objects by file handles.
+objects by file id.
 Note that without the flag
 .BR FAN_REPORT_TARGET_FID ,
 for the directory entry modification events,
@@ -198,6 +198,20 @@ See
 .BR fanotify (7)
 for additional details.
 .TP
+.BR FAN_REPORT_ANY_FID " (since Linux 6.x)"
+.\" commit WIP
+This value allows the receipt of events
+which contain additional information
+about the underlying filesystem object correlated to an event,
+for any underlying filesystem.
+When the underlying filesystem does not support encoding of NFS file handles,
+the object is identified using its inode number.
+When the underlying filesystem does not support encoding of fsid,
+the filesystem is identified using the backing device number.
+See
+.BR fanotify (7)
+for additional details.
+.TP
 .BR FAN_REPORT_DIR_FID " (since Linux 5.9)"
 .\" commit 83b7a59896dd24015a34b7f00027f0ff3747972f
 Events for fanotify groups initialized with this flag will contain
@@ -208,9 +222,9 @@ An additional record of type
 encapsulates the information about the directory object and is included
 alongside the generic event metadata structure.
 For events that occur on a non-directory object, the additional structure
-includes a file handle that identifies the parent directory filesystem object.
+includes a file id that identifies the parent directory filesystem object.
 Note that there is no guarantee that the directory filesystem object will be
-found at the location described by the file handle information at the time
+found at the location described by the file id information at the time
 the event is received.
 When combined with the flag
 .BR FAN_REPORT_FID ,
@@ -249,7 +263,7 @@ which encapsulates the information about the directory entry, is included
 alongside the generic event metadata structure and substitutes the additional
 information record of type
 .BR FAN_EVENT_INFO_TYPE_DFID .
-The additional record includes a file handle that identifies a directory
+The additional record includes a file id that identifies a directory
 filesystem object followed by a name that identifies an entry in that
 directory.
 For the directory entry modification events
@@ -267,16 +281,21 @@ identifying the old directory entry,
 and another of type
 .B FAN_EVENT_INFO_TYPE_NEW_DFID_NAME
 identifying the new directory entry.
-For other events that occur on a directory object, the reported file handle
+For other events that occur on a directory object, the reported file id
 is that of the directory object itself and the reported name is '.'.
-For other events that occur on a non-directory object, the reported file handle
+For other events that occur on a non-directory object, the reported file id
 is that of the parent directory object and the reported name is the name of a
 directory entry where the object was located at the time of the event.
-The rationale behind this logic is that the reported directory file handle can
-be passed to
+The rationale behind this logic is that
+if the monitored filesystem supports
+encoding of NFS file handles,
+the reported directory file handle
+can be passed to
 .BR open_by_handle_at (2)
-to get an open directory file descriptor and that file descriptor along with
-the reported name can be used to call
+to get an open directory file descriptor
+and that file descriptor
+along with the reported name
+can be used to call
 .BR fstatat (2).
 The same rule that applies to record type
 .B FAN_EVENT_INFO_TYPE_DFID
@@ -322,7 +341,7 @@ is reported in addition to the information records of type
 .BR FAN_EVENT_INFO_TYPE_OLD_DFID_NAME ,
 and
 .BR FAN_EVENT_INFO_TYPE_NEW_DFID_NAME .
-The additional record includes a file handle
+The additional record includes a file id
 that identifies the filesystem child object
 that the directory entry is referring to.
 .TP
@@ -494,7 +513,7 @@ or
 This means that user cannot request permission events.
 .IP \[bu]
 The user is required to create a group that identifies filesystem objects by
-file handles, for example, by providing the
+file id, for example, by providing the
 .B FAN_REPORT_FID
 flag.
 .IP \[bu]

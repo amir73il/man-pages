@@ -157,7 +157,7 @@ then event listeners should also expect to receive a
 structure alongside the
 .I fanotify_event_metadata
 structure,
-whereby file handles are used to
+whereby file ids are used to
 identify filesystem objects
 rather than file descriptors.
 Information records may also be stacked,
@@ -195,7 +195,7 @@ determine the type of information record that
 had been received for a given event.
 .PP
 In cases where an fanotify group
-identifies filesystem objects by file handles,
+identifies filesystem objects by file ids,
 event listeners should also expect to
 receive one or more of the below
 information record objects alongside the generic
@@ -205,9 +205,9 @@ structure within the read buffer:
 .in +4n
 .EX
 struct fanotify_event_info_fid {
-    struct fanotify_event_info_header hdr;
-    __kernel_fsid_t fsid;
-    unsigned char file_handle[0];
+	struct fanotify_event_info_header hdr;
+	__kernel_fsid_t fsid;
+	unsigned char file_handle[0];
 };
 .EE
 .in
@@ -282,11 +282,11 @@ structure are as follows:
 .I event_len
 This is the length of the data for the current event and the offset
 to the next event in the buffer.
-Unless the group identifies filesystem objects by file handles, the value of
+Unless the group identifies filesystem objects by file ids, the value of
 .I event_len
 is always
 .BR FAN_EVENT_METADATA_LEN .
-For a group that identifies filesystem objects by file handles,
+For a group that identifies filesystem objects by file ids,
 .I event_len
 also includes the variable length file identifier records.
 .TP
@@ -315,7 +315,7 @@ This is a bit mask describing the event (see below).
 This is an open file descriptor for the object being accessed, or
 .B FAN_NOFD
 if a queue overflow occurred.
-With an fanotify group that identifies filesystem objects by file handles,
+With an fanotify group that identifies filesystem objects by file ids,
 applications should expect this value to be set to
 .B FAN_NOFD
 for each event that is received.
@@ -486,7 +486,7 @@ for additional details.
 The
 .B FAN_ONDIR
 flag is reported in an event mask only if the fanotify group identifies
-filesystem objects by file handles.
+filesystem objects by file ids.
 .PP
 Information records that are supplied alongside the generic
 .I fanotify_event_metadata
@@ -574,16 +574,32 @@ It is a structure of type
 and contains the same value as
 .I f_fsid
 when calling
-.BR statfs (2).
+.BR statfs (2)
+if those values are not zero.
+Otherwise,
+.I fsid[0]
+contains the values of
+.I stx_dev_major
+and
+.I fsid[1]
+contains the values of
+.I stx_dev_minor
+from
+.BR statx(2) .
 .TP
 .I file_handle
-This is a variable length structure of type struct file_handle.
-It is an opaque handle that corresponds to a specified object on a
-filesystem as returned by
-.BR name_to_handle_at (2).
-It can be used to uniquely identify a file on a filesystem and can be
-passed as an argument to
+This is a variable length structure of type struct file_handle
+that can be used to uniquely identify the filesystem object.
+If the monitored filesystem supports encoding of NFS file handles,
+this structure is the same opaque handle as returned by
+.BR name_to_handle_at (2) ,
+that can be passed as an argument to
 .BR open_by_handle_at (2).
+Otherwise,
+struct file_handle encodes the value of
+.I stx_ino
+from
+.BR statx(2) .
 If the value of
 .I info_type
 field is

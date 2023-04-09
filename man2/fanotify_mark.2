@@ -109,7 +109,7 @@ is not itself a mount point, the mount containing
 will be marked.
 All directories, subdirectories, and the contained files of the mount
 will be monitored.
-The events which require that filesystem objects are identified by file handles,
+The events which require that filesystem objects are identified by file id,
 such as
 .BR FAN_CREATE ,
 .BR FAN_ATTRIB ,
@@ -339,27 +339,27 @@ See NOTES for additional details.
 .BR FAN_ATTRIB " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when the metadata for a file or directory has changed.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .BR FAN_CREATE " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a file or directory has been created in a marked
 parent directory.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .BR FAN_DELETE " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a file or directory has been deleted in a marked
 parent directory.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .BR FAN_DELETE_SELF " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a marked file or directory itself is deleted.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .BR FAN_FS_ERROR " (since Linux 5.16)"
@@ -369,7 +369,7 @@ leading to inconsistent filesystem metadata is detected.
 An additional information record of type
 .B FAN_EVENT_INFO_TYPE_ERROR
 is returned for each event in the read buffer.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .IP
 Events of such type are dependent on support
@@ -389,14 +389,14 @@ for additional details.
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a file or directory has been moved from a marked
 parent directory.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .BR FAN_MOVED_TO " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a file or directory has been moved to a marked parent
 directory.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .BR FAN_RENAME " (since Linux 5.17)"
@@ -406,7 +406,7 @@ This event contains the same information provided by events
 and
 .BR FAN_MOVED_TO ,
 however is represented by a single event with up to two information records.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 If the filesystem object to be marked is not a directory, the error
 .B ENOTDIR
@@ -415,7 +415,7 @@ shall be raised.
 .BR FAN_MOVE_SELF " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a marked file or directory itself has been moved.
-An fanotify group that identifies filesystem objects by file handles
+An fanotify group that identifies filesystem objects by file id
 is required.
 .TP
 .B FAN_OPEN_PERM
@@ -618,7 +618,7 @@ was not an fanotify file descriptor.
 .B EINVAL
 The fanotify file descriptor was opened with
 .B FAN_CLASS_NOTIF
-or the fanotify group identifies filesystem objects by file handles
+or the fanotify group identifies filesystem objects by file id
 and mask contains a flag for permission events
 .RB ( FAN_OPEN_PERM
 or
@@ -669,7 +669,8 @@ did not support
 prior to Linux 5.13.
 .\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
 This error can be returned only with an fanotify group that identifies
-filesystem objects by file handles.
+filesystem objects by file id and was initialized without
+.BR FAN_REPORT_ANY_FID .
 .TP
 .B ENOENT
 The filesystem object indicated by
@@ -743,10 +744,12 @@ do not specify a directory.
 .B EOPNOTSUPP
 The object indicated by
 .I pathname
-is associated with a filesystem that does not support the encoding of file
-handles.
-This error can be returned only with an fanotify group that identifies
-filesystem objects by file handles.
+is associated with a filesystem that
+does not support the encoding of NFS file handles.
+This error can be returned only with an fanotify group
+that identifies filesystem objects by file id
+and was initialized without
+.BR FAN_REPORT_ANY_FID .
 .TP
 .B EPERM
 The operation is not permitted because the caller lacks a required capability.
@@ -759,8 +762,8 @@ resides within a filesystem subvolume (e.g.,
 which uses a different
 .I fsid
 than its root superblock.
-This error can be returned only with an fanotify group that identifies
-filesystem objects by file handles.
+This error can be returned only with an fanotify group
+that identifies filesystem objects by file id.
 .SH STANDARDS
 Linux.
 .SH HISTORY
