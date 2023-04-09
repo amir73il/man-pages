@@ -385,6 +385,22 @@ See
 .BR fanotify (7)
 for additional details.
 .TP
+.BR FAN_UNMOUNT " (since Linux 6.x)"
+.\" commit WIP
+Create an event when a marked mount is unmounted.
+An attempt to set this flag on an inode or filesystem mark
+will result in the error
+.BR EINVAL .
+An fanotify group that identifies filesystem objects by file id
+is required.
+An additional information record of type
+.B FAN_EVENT_INFO_TYPE_MNTID
+is returned with the event.
+.IP
+See
+.BR fanotify (7)
+for additional details.
+.TP
 .BR FAN_MOVED_FROM " (since Linux 5.1)"
 .\" commit 235328d1fa4251c6dcb32351219bb553a58838d2
 Create an event when a file or directory has been moved from a marked
