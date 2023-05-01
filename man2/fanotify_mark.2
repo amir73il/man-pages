@@ -743,10 +743,17 @@ do not specify a directory.
 .B EOPNOTSUPP
 The object indicated by
 .I pathname
-is associated with a filesystem that does not support the encoding of file
-handles.
+is associated with a filesystem
+that does not support the encoding of file handles.
 This error can be returned only with an fanotify group that identifies
 filesystem objects by file handles.
+Calling
+.BR name_to_handle_at (2)
+with the flag
+.BR AT_HANDLE_FID " (since Linux 6.5)"
+.\" commit 96b2b072ee62be8ae68c8ecf14854c4d0505a8f8
+can be used as a test
+to check if a filesystem supports reporting events with file handles.
 .TP
 .B EPERM
 The operation is not permitted because the caller lacks a required capability.

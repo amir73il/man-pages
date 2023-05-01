@@ -109,16 +109,43 @@ structure as an opaque data type: the
 .I handle_type
 and
 .I f_handle
-fields are needed only by a subsequent call to
+fields can be used in a subsequent call to
 .BR open_by_handle_at ().
+The caller can also use the opaque
+.I file_handle
+to compare the identity of filesystem objects
+that were queried at different times and possibly
+at different paths.
+The
+.BR fanotify (7)
+subsystem can report events
+with an information record containing a
+.I file_handle
+to identify the filesystem object.
 .PP
 The
 .I flags
 argument is a bit mask constructed by ORing together zero or more of
-.B AT_EMPTY_PATH
+.BR AT_HANDLE_FID ,
+.BR AT_EMPTY_PATH ,
 and
 .BR AT_SYMLINK_FOLLOW ,
 described below.
+.PP
+When
+.I flags
+contain the
+.BR AT_HANDLE_FID " (since Linux 6.5)"
+.\" commit 96b2b072ee62be8ae68c8ecf14854c4d0505a8f8
+flag, the caller indicates that the returned
+.I file_handle
+is needed to identify the filesystem object,
+and not for opening the file later,
+so it should be expected that a subsequent call to
+.BR open_by_handle_at ()
+with the returned
+.I file_handle
+may fail.
 .PP
 Together, the
 .I pathname
@@ -363,8 +390,14 @@ capability.
 .B ESTALE
 The specified
 .I handle
-is not valid.
+is not valid for opening a file.
 This error will occur if, for example, the file has been deleted.
+This error can also occur if the
+.I handle
+was aquired using the
+.B AT_HANDLE_FID
+flag and the filesystem does not support
+.BR open_by_handle_at ().
 .SH VERSIONS
 FreeBSD has a broadly similar pair of system calls in the form of
 .BR getfh ()
@@ -386,6 +419,9 @@ file handles, for example,
 .IR /proc ,
 .IR /sys ,
 and various network filesystems.
+Some filesystem support the translation of pathnames to
+file handles, but do not support using those file handles in
+.BR open_by_handle_at ().
 .PP
 A file handle may become invalid ("stale") if a file is deleted,
 or for other filesystem-specific reasons.
