@@ -461,6 +461,34 @@ or
 .B FAN_CLASS_CONTENT
 is required.
 .TP
+.BR FAN_PRE_ACCESS " (since Linux 6.x)"
+.\" commit WIP
+Create an event before a read from a directory or a file range,
+that provides an opportunity for the event listener
+to modify the content of the object
+before the reader is going to access the content
+in the specified range.
+An additional information record of type
+.B FAN_EVENT_INFO_TYPE_RANGE
+is returned for each event in the read buffer.
+An fanotify file descriptor created with
+.B FAN_CLASS_PRE_CONTENT
+is required.
+.TP
+.BR FAN_PRE_MODIFY " (since Linux 6.x)"
+.\" commit WIP
+Create an event before a write to a file range,
+that provides an opportunity for the event listener
+to modify the content of the object
+before the writer is going to modify content
+in the specified range.
+An additional information record of type
+.B FAN_EVENT_INFO_TYPE_RANGE
+is returned for each event in the read buffer.
+An fanotify file descriptor created with
+.B FAN_CLASS_PRE_CONTENT
+is required.
+.TP
 .B FAN_ONDIR
 Create events for directories\[em]for example, when
 .BR opendir (3),

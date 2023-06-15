@@ -247,6 +247,27 @@ struct fanotify_event_info_error {
 .EE
 .in
 .PP
+In case of
+.B FAN_PRE_ACCESS
+and
+.B FAN_PRE_MODIFY
+events,
+an additional information record describing the access range
+is returned alongside the generic
+.I fanotify_event_metadata
+structure within the read buffer.
+This structure is defined as follows:
+.PP
+.in +4n
+.EX
+struct fanotify_event_info_range {
+    struct fanotify_event_info_header hdr;
+    __u32 count;
+    __u64 offset;
+};
+.EE
+.in
+.PP
 All information records contain a nested structure of type
 .IR fanotify_event_info_header .
 This structure holds meta-information about the information record
@@ -507,8 +528,9 @@ The value of this field can be set to one of the following:
 .BR FAN_EVENT_INFO_TYPE_FID ,
 .BR FAN_EVENT_INFO_TYPE_DFID ,
 .BR FAN_EVENT_INFO_TYPE_DFID_NAME ,
-or
-.BR FAN_EVENT_INFO_TYPE_PIDFD .
+.BR FAN_EVENT_INFO_TYPE_PIDFD ,
+.BR FAN_EVENT_INFO_TYPE_ERROR ,
+.BR FAN_EVENT_INFO_TYPE_RANGE .
 The value set for this field
 is dependent on the flags that have been supplied to
 .BR fanotify_init (2).
@@ -701,6 +723,24 @@ Identifies the type of error that occurred.
 .I error_count
 This is a counter of the number of errors suppressed
 since the last error was read.
+.PP
+The fields of the
+.I fanotify_event_info_range
+structure are as follows:
+.TP
+.I hdr
+This is a structure of type
+.IR fanotify_event_info_header .
+The
+.I info_type
+field is set to
+.BR FAN_EVENT_INFO_TYPE_RANGE .
+.TP
+.I count
+The number of bytes being read or written to the file.
+.TP
+.I offset
+The offset from which bytes are read or written to the file.
 .PP
 The following macros are provided to iterate over a buffer containing
 fanotify event metadata returned by a

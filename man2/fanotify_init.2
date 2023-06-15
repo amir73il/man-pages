@@ -57,8 +57,8 @@ Only one of the following notification classes may be specified in
 .B FAN_CLASS_PRE_CONTENT
 This value allows the receipt of events notifying that a file has been
 accessed and events for permission decisions if a file may be accessed.
-It is intended for event listeners that need to access files before they
-contain their final data.
+It is intended for event listeners that may need to write data to files
+before their final data can be accessed.
 This notification class might be used by hierarchical storage managers,
 for example.
 Use of this flag requires the
