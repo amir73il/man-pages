@@ -437,7 +437,8 @@ is required.
 .B FAN_OPEN_PERM
 Create an event when a permission to open a file or directory is requested.
 An fanotify file descriptor created with
-.B FAN_CLASS_PRE_CONTENT
+.BR FAN_CLASS_PRE_PATH ,
+.BR FAN_CLASS_PRE_CONTENT ,
 or
 .B FAN_CLASS_CONTENT
 is required.
@@ -447,7 +448,8 @@ is required.
 Create an event when a permission to open a file for execution is
 requested.
 An fanotify file descriptor created with
-.B FAN_CLASS_PRE_CONTENT
+.BR FAN_CLASS_PRE_PATH ,
+.BR FAN_CLASS_PRE_CONTENT ,
 or
 .B FAN_CLASS_CONTENT
 is required.
@@ -456,7 +458,8 @@ See NOTES for additional details.
 .B FAN_ACCESS_PERM
 Create an event when a permission to read a file or directory is requested.
 An fanotify file descriptor created with
-.B FAN_CLASS_PRE_CONTENT
+.BR FAN_CLASS_PRE_PATH ,
+.BR FAN_CLASS_PRE_CONTENT ,
 or
 .B FAN_CLASS_CONTENT
 is required.
@@ -472,6 +475,8 @@ An additional information record of type
 .B FAN_EVENT_INFO_TYPE_RANGE
 is returned for each event in the read buffer.
 An fanotify file descriptor created with
+.BR FAN_CLASS_PRE_PATH ,
+or
 .B FAN_CLASS_PRE_CONTENT
 is required.
 .TP
@@ -486,7 +491,29 @@ An additional information record of type
 .B FAN_EVENT_INFO_TYPE_RANGE
 is returned for each event in the read buffer.
 An fanotify file descriptor created with
+.BR FAN_CLASS_PRE_PATH ,
+or
 .B FAN_CLASS_PRE_CONTENT
+is required.
+.TP
+.BR FAN_PATH_ACCESS " (since Linux 6.x)"
+.\" commit WIP
+Create an event before an object in a path is accessed,
+that provides an opportunity for the event listener
+to create files and directories
+that would be returned as the path lookup result.
+An fanotify file descriptor created with
+.B FAN_CLASS_PRE_PATH
+is required.
+.TP
+.BR FAN_PATH_MODIFY " (since Linux 6.x)"
+.\" commit WIP
+Create an event before an object in a path is modified,
+that provides an opportunity for the event listener
+to create files and directories
+that would be returned as the path lookup result.
+An fanotify file descriptor created with
+.B FAN_CLASS_PRE_PATH
 is required.
 .TP
 .B FAN_ONDIR

@@ -54,6 +54,32 @@ in which the listeners receive the events.
 Only one of the following notification classes may be specified in
 .IR flags :
 .TP
+.BR FAN_CLASS_PRE_PATH " (since Linux 6.x)"
+.\" commit WIP
+This value allows the receipt of events notifying that a path has been
+looked up and events for permission decisions if a path may be accessed.
+It is intended for event listeners that may need to create files and
+directories before the final path can be accesed.
+This notification class might be used by hierarchical storage managers,
+for example.
+When this flag is used, the value of
+.I event_f_flags
+must be
+.BR O_PATH .
+Use of this flag is allowed in conjunction with the flags
+.BR FAN_REPORT_DIR_FID ,
+and
+.BR FAN_REPORT_NAME .
+In that case, path lookup events will contain information records
+about the looked up directory entries
+in addition to the
+.B O_PATH
+file descriptors,
+that can be used to create those directory entries.
+Use of this flag requires the
+.B CAP_SYS_ADMIN
+capability.
+.TP
 .B FAN_CLASS_PRE_CONTENT
 This value allows the receipt of events notifying that a file has been
 accessed and events for permission decisions if a file may be accessed.
@@ -85,6 +111,7 @@ Permission decisions before the file is accessed are not possible.
 .PP
 Listeners with different notification classes will receive events in the
 order
+.BR FAN_CLASS_PRE_PATH ,
 .BR FAN_CLASS_PRE_CONTENT ,
 .BR FAN_CLASS_CONTENT ,
 .BR FAN_CLASS_NOTIF .
@@ -378,6 +405,12 @@ values in
 includes a multi-bit field for the access mode.
 This field can take the following values:
 .TP
+.B O_PATH
+This value allows using the file descriptor in the event as
+. I dirfd
+argument for various system calls, such as
+.BR openat2 (2).
+.TP
 .B O_RDONLY
 This value allows only read access.
 .TP
@@ -488,9 +521,10 @@ The user cannot request for an unlimited number of marks by using
 .BR FAN_UNLIMITED_MARKS .
 .IP \[bu]
 The user cannot request to use either notification classes
-.B FAN_CLASS_CONTENT
+.BR FAN_CLASS_PRE_PATH ,
+.BR FAN_CLASS_PRE_CONTENT ,
 or
-.BR FAN_CLASS_PRE_CONTENT .
+.BR FAN_CLASS_CONTENT .
 This means that user cannot request permission events.
 .IP \[bu]
 The user is required to create a group that identifies filesystem objects by
