@@ -427,6 +427,12 @@ values in
 includes a multi-bit field for the access mode.
 This field can take the following values:
 .TP
+.B O_PATH
+This value allows using the file descriptor in the event as
+. I dirfd
+argument for various system calls, such as
+.BR openat2 (2).
+.TP
 .B O_RDONLY
 This value allows only read access.
 .TP

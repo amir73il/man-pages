@@ -493,6 +493,30 @@ is returned for each event in the read buffer.
 An fanotify file descriptor created with
 .B FAN_CLASS_PRE_CONTENT
 is required.
+Since Linux 6.x,
+.\" commit WIP
+this flag can be combined with flag
+.B FAN_ONDIR
+to create event before readdir of a directory.
+In that case, the flag
+.B FAN_ONDIR
+is reported in the event mask and there is no additional
+file range information record.
+.TP
+.BR FAN_PATH_ACCESS " (since Linux 6.x)"
+.\" commit WIP
+Create an event before an directory in a path is accessed,
+that provides an opportunity for the event listener
+to create files and directories
+that would be returned as the path lookup result.
+The file descriptor reported in the event is associated with
+the directory where the name lookup happens.
+The event will be create at least once for every unique name
+that is looked up in a direcrory, but it may not be created
+for subsequent lookups of the same name.
+An fanotify file descriptor created with
+.B FAN_CLASS_PRE_CONTENT
+is required.
 .TP
 .B FAN_ONDIR
 Create events for directories\[em]for example, when
