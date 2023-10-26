@@ -575,6 +575,17 @@ and contains the same value as
 .I f_fsid
 when calling
 .BR statfs (2).
+Note that some filesystems (e.g.,
+.BR fuse (4))
+report zero
+.IR fsid .
+In these cases,
+it is not possible to use
+.I fsid
+to associate the event with a specific filesystem instance,
+so monitoring different filesystem instances that report zero
+.I fsid
+with the same fanotify group is not supported.
 .TP
 .I handle
 This field contains a variable-length structure of type
