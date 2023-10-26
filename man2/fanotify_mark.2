@@ -659,17 +659,17 @@ The filesystem object indicated by
 .I dirfd
 and
 .I pathname
-is not associated with a filesystem that supports
+is associated with a filesystem that reports zero
 .I fsid
 (e.g.,
 .BR fuse (4)).
-.BR tmpfs (5)
-did not support
-.I fsid
-prior to Linux 5.13.
-.\" commit 59cda49ecf6c9a32fae4942420701b6e087204f6
 This error can be returned only with an fanotify group that identifies
 filesystem objects by file handles.
+Since Linux 6.x,
+.\" commit WIP
+this error will be returned only when
+trying to add a mount or filesystem mark, or
+when the fanotify group already has mount or filesystem marks.
 .TP
 .B ENOENT
 The filesystem object indicated by
@@ -768,6 +768,16 @@ which uses a different
 than its root superblock.
 This error can be returned only with an fanotify group that identifies
 filesystem objects by file handles.
+Since Linux 6.x,
+.\" commit WIP
+this error can be returned when trying to add a mark on an object
+in a filesystems that reports zero
+.I fsid
+(e.g.,
+.BR fuse (4)),
+and the fanotify group already has a mark on an object
+in a different filesystem instance that also reports zero
+.IR fsid .
 .SH STANDARDS
 Linux.
 .SH HISTORY
