@@ -778,6 +778,28 @@ to deny the file operation.
 If access is denied, the requesting application call will receive an
 .B EPERM
 error.
+Since Linux 6.13,
+.\" commit b4b2ff4f61ded819bfa22e50fdec7693f51cbbee
+if a notification group is initialized with class
+.BR FAN_CLASS_PRE_CONTENT ,
+the file operation can be denied with errors other than
+.BR EPERM .
+For example, for the requesting application to get the
+.B EIO
+error, the event listener can write the response
+.BR FAN_DENY_ERRNO ( EIO ).
+At the time of writing,
+only the following error values could be returned to the application with
+.BR FAN_DENY_ERRNO
+macro:
+.BR EPERM ,
+.BR EIO ,
+.BR EBUSY ,
+.BR ETXTBSY ,
+.BR EAGAIN ,
+.BR ENOSPC ,
+.BR EDQUOT .
+.P
 Additionally, if the notification group has been created with the
 .B FAN_ENABLE_AUDIT
 flag, then the
