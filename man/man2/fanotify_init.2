@@ -364,6 +364,34 @@ so this restriction may eventually be lifted.
 For more details on information records,
 see
 .BR fanotify (7).
+.TP
+.BR FAN_REPORT_FD_ERROR " (since Linux 6.13 and 6.12.4 and 6.6.66)"
+.\" commit 522249f05c5551aec9ec0ba9b6438f1ec19c138d
+Events for fanotify groups initialized with this flag may contain
+an error code that explains the reason for failure to open a file descriptor.
+The
+.I .fd
+member of the
+.I fanotify_event_metadata
+structure normally contains
+an open file descriptor associated with the object of the event
+or FAN_NOFD in case a file descriptor could not be opened.
+For a group initialized with this flag, instead of FAN_NOFD,
+the
+.I .fd
+member of the
+.I fanotify_event_metadata
+structure will contain a negative error value.
+When the group is also initialized with flag
+.BR FAN_REPORT_PIDFD ,
+in case a process file descriptor could not be opened,
+the
+.I .pidfd
+member of the
+.I fanotify_event_info_pidfd
+structure will also contain a negative error value.
+For more details, see
+.BR fanotify (7).
 .P
 The
 .I event_f_flags

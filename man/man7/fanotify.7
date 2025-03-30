@@ -335,6 +335,13 @@ file status flag is set on the open file description.
 This flag suppresses fanotify event generation.
 Hence, when the receiver of the fanotify event accesses the notified file or
 directory using this file descriptor, no additional events will be created.
+.IP
+When an fanotify group is initialized using
+.BR FAN_REPORT_FD_ERROR ,
+this field will contain a negative error value in case a file descriptor
+could not be opened and
+in case of a queue overflow, the value will be
+.BR \-EBADF .
 .TP
 .I pid
 If flag
@@ -679,6 +686,13 @@ Once the event listener has dealt with an event
 and the pidfd is no longer required,
 the pidfd should be closed via
 .BR close (2).
+.IP
+When an fanotify group is initialized using
+.BR FAN_REPORT_FD_ERROR ,
+this field will contain a negative error value
+in case a pidfd creation failure and
+in case of a terminated process, the value will be
+.BR \-ESRCH .
 .P
 The fields of the
 .I fanotify_event_info_error
