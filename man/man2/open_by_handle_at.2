@@ -128,6 +128,7 @@ The
 argument is a bit mask constructed by ORing together zero or more of
 .BR AT_HANDLE_FID ,
 .BR AT_HANDLE_MNT_ID_UNIQUE,
+.BR AT_HANDLE_CONNECTABLE,
 .BR AT_EMPTY_PATH ,
 and
 .BR AT_SYMLINK_FOLLOW ,
@@ -162,6 +163,29 @@ is the unique mount id as the one returned by
 with the
 .BR STATX_MNT_ID_UNIQUE
 flag.
+.P
+When
+.I flags
+contain the
+.BR AT_HANDLE_CONNECTABLE " (since Linux 6.13)"
+.\" commit a20853ab8296d4a8754482cb5e9adde8ab426a25
+flag, the caller indicates that the returned
+.I file_handle
+is needed to open a file with known path later,
+so it should be expected that a subsequent call to
+.BR open_by_handle_at ()
+with the returned
+.I file_handle
+may fail if the file was moved,
+but otherwise,
+the path of the opened file is expected to be visible
+from the
+.IR /proc/ pid /fd/ *
+magic link.
+This flag can not be used in combination with the flags
+.B AT_HANDLE_FID
+and/or
+.BR AT_EMPTY_PATH .
 .P
 Together, the
 .I pathname
@@ -327,7 +351,7 @@ points outside your accessible address space.
 .TP
 .B EINVAL
 .I flags
-includes an invalid bit value.
+includes an invalid bit value or an invalid bit combination.
 .TP
 .B EINVAL
 .I handle\->handle_bytes
@@ -414,6 +438,11 @@ was acquired using the
 .B AT_HANDLE_FID
 flag and the filesystem does not support
 .BR open_by_handle_at ().
+This error can also occur if the
+.I handle
+was acquired using the
+.B AT_HANDLE_CONNECTABLE
+flag and the file was moved to a different parent.
 .SH VERSIONS
 FreeBSD has a broadly similar pair of system calls in the form of
 .BR getfh ()
