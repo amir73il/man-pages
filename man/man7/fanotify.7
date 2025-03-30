@@ -787,6 +787,49 @@ flag can be set in the
 field.
 In that case, the audit subsystem will log information about the access
 decision to the audit logs.
+.P
+Since Linux 6.3,
+.\" commit 70529a199574c15a40f46b14256633b02ba10ca2
+the
+.B FAN_INFO
+flag can be set in the
+.I .response
+field.
+It indicates that an extra variable-length response record follows the
+.I fanotify_response
+structure.
+Extra response records start with a common header:
+.P
+.in +4n
+.EX
+struct fanotify_response_info_header {
+    __u8 type;
+    __u8 pad;
+    __u16 len;
+};
+.EE
+.in
+.P
+The value of
+.I .type
+determines the format of the extra response record.
+In case the value of
+.I .type
+is
+.BR FAN_RESPONSE_INFO_AUDIT_RULE ,
+the following response record is expected
+with extra details for the audit log:
+.P
+.in +4n
+.EX
+struct fanotify_response_info_audit_rule {
+    struct fanotify_response_info_header hdr;
+    __u32 rule_number;
+    __u32 subj_trust;
+    __u32 obj_trust;
+};
+.EE
+.in
 .\"
 .SS Monitoring filesystems for errors
 A single
