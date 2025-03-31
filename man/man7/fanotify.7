@@ -395,9 +395,6 @@ A child file or directory was deleted in a watched parent.
 .B FAN_DELETE_SELF
 A watched file or directory was deleted.
 .TP
-.B FAN_FS_ERROR
-A filesystem error was detected.
-.TP
 .B FAN_RENAME
 A file or directory has been moved to or from a watched parent directory.
 .TP
@@ -424,6 +421,9 @@ was closed.
 A file or directory that was opened read-only
 .RB ( O_RDONLY )
 was closed.
+.TP
+.B FAN_FS_ERROR
+A filesystem error was detected.
 .TP
 .B FAN_Q_OVERFLOW
 The event queue exceeded the limit on number of events.
@@ -510,6 +510,7 @@ The value of this field can be set to one of the following:
 .BR FAN_EVENT_INFO_TYPE_FID ,
 .BR FAN_EVENT_INFO_TYPE_DFID ,
 .BR FAN_EVENT_INFO_TYPE_DFID_NAME ,
+.BR FAN_EVENT_INFO_TYPE_ERROR ,
 or
 .BR FAN_EVENT_INFO_TYPE_PIDFD .
 The value set for this field
