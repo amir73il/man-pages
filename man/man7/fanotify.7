@@ -247,6 +247,26 @@ struct fanotify_event_info_error {
 .EE
 .in
 .P
+In case of
+.B FAN_PRE_ACCESS
+events,
+an additional information record describing the access range
+is returned alongside the generic
+.I fanotify_event_metadata
+structure within the read buffer.
+This structure is defined as follows:
+.P
+.in +4n
+.EX
+struct fanotify_event_info_range {
+    struct fanotify_event_info_header hdr;
+    __u32 pad;
+    __u64 offset;
+    __u64 count;
+};
+.EE
+.in
+.P
 All information records contain a nested structure of type
 .IR fanotify_event_info_header .
 This structure holds meta-information about the information record
@@ -441,6 +461,16 @@ The reader must write a response (as described below)
 that determines whether the permission to
 access the filesystem object shall be granted.
 .TP
+.BR FAN_PRE_ACCESS
+An application wants to access a file range, for example using
+.BR read (2),
+.BR write (2)
+or
+.BR mmap (2).
+The reader must write a response (as described below)
+that determines whether the permission to
+access the filesystem object shall be granted.
+.TP
 .B FAN_OPEN_PERM
 An application wants to open a file or directory.
 The reader must write a response that determines whether the permission to
@@ -511,6 +541,7 @@ The value of this field can be set to one of the following:
 .BR FAN_EVENT_INFO_TYPE_DFID ,
 .BR FAN_EVENT_INFO_TYPE_DFID_NAME ,
 .BR FAN_EVENT_INFO_TYPE_ERROR ,
+.BR FAN_EVENT_INFO_TYPE_RANGE ,
 or
 .BR FAN_EVENT_INFO_TYPE_PIDFD .
 The value set for this field
@@ -713,6 +744,24 @@ Identifies the type of error that occurred.
 .I error_count
 This is a counter of the number of errors suppressed
 since the last error was read.
+.P
+The fields of the
+.I fanotify_event_info_range
+structure are as follows:
+.TP
+.I .hdr
+This is a structure of type
+.IR fanotify_event_info_header .
+The
+.I .info_type
+field is set to
+.BR FAN_EVENT_INFO_TYPE_RANGE .
+.TP
+.I .count
+The number of bytes being read or written to the file.
+.TP
+.I .offset
+The offset from which bytes are read or written to the file.
 .P
 The following macros are provided to iterate over a buffer containing
 fanotify event metadata returned by a

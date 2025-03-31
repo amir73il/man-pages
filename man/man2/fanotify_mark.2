@@ -443,6 +443,20 @@ or
 .B FAN_CLASS_CONTENT
 is required.
 .TP
+.BR FAN_PRE_ACCESS " (since Linux 6.14)"
+.\" commit 4f8afa33817a6420398d1c177c6e220a05081f51
+Create an event before read or write access to a file range,
+that provides an opportunity for the event listener
+to modify the content of the file
+before access to the content
+in the specified range.
+An additional information record of type
+.B FAN_EVENT_INFO_TYPE_RANGE
+is returned for each event in the read buffer.
+An fanotify file descriptor created with
+.B FAN_CLASS_PRE_CONTENT
+is required.
+.TP
 .B FAN_ONDIR
 Create events for directories\[em]for example, when
 .BR opendir (3),
