@@ -228,6 +228,23 @@ struct fanotify_event_info_pidfd {
 .EE
 .in
 .P
+In cases where an fanotify group is initialized with
+.BR FAN_REPORT_MNT ,
+event listeners should expect to receive the below
+information record object alongside the generic
+.I fanotify_event_metadata
+structure within the read buffer.
+This structure is defined as follows:
+.P
+.in +4n
+.EX
+struct fanotify_event_info_mnt {
+    struct fanotify_event_info_header hdr;
+    __u64 mnt_id;
+};
+.EE
+.in
+.P
 In case of a
 .B FAN_FS_ERROR
 event,
@@ -442,6 +459,12 @@ A file or directory that was opened read-only
 .RB ( O_RDONLY )
 was closed.
 .TP
+.BR FAN_MNT_ATTACH
+A mount was attached to mount namespace.
+.TP
+.BR FAN_MNT_DETACH
+A mount was detached from mount namespace.
+.TP
 .B FAN_FS_ERROR
 A filesystem error was detected.
 .TP
@@ -540,6 +563,8 @@ The value of this field can be set to one of the following.
 .B FAN_EVENT_INFO_TYPE_ERROR
 .TQ
 .B FAN_EVENT_INFO_TYPE_RANGE
+.TQ
+.B FAN_EVENT_INFO_TYPE_MNT
 .RE
 .IP
 The value set for this field
@@ -723,6 +748,26 @@ this field will contain a negative error value
 in case a pidfd creation failure and
 in case of a terminated process, the value will be
 .BR \-ESRCH .
+.P
+The fields of the
+.I fanotify_event_info_mnt
+structure are as follows:
+.TP
+.I .hdr
+This is a structure of type
+.IR fanotify_event_info_header .
+The
+.I .info_type
+field is set to
+.BR FAN_EVENT_INFO_TYPE_MNT .
+.TP
+.I .mnt_id
+Identifies the mount associated with the event.
+It is a 64-bit unique mount id as the one returned by
+.BR statx (2)
+with the
+.B STATX_MNT_ID_UNIQUE
+flag.
 .P
 The fields of the
 .I fanotify_event_info_error

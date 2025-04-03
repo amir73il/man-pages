@@ -67,7 +67,8 @@ contains
 all marks for filesystems are removed from the group.
 Otherwise, all marks for directories and files are removed.
 No flag other than, and at most one of, the flags
-.B FAN_MARK_MOUNT
+.BR FAN_MARK_MNTNS ,
+.BR FAN_MARK_MOUNT ,
 or
 .B FAN_MARK_FILESYSTEM
 can be used in conjunction with
@@ -98,6 +99,20 @@ if it is a symbolic link.)
 If the filesystem object to be marked is not a directory, the error
 .B ENOTDIR
 shall be raised.
+.TP
+.BR FAN_MARK_MNTNS " (since Linux 6.14)"
+.\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
+Mark the mount namespace specified by
+.IR pathname .
+If the
+.I pathname
+is not a path that represents a mount namespace (e.g.
+.IR /proc/ pid /ns/mnt ),
+the call fails with the error
+.BR EINVAL .
+An fanotify group that was initialized with flag
+.B FAN_REPORT_MNT
+is required.
 .TP
 .B FAN_MARK_MOUNT
 Mark the mount specified by
@@ -394,6 +409,26 @@ shall be raised.
 Create an event when a marked file or directory itself has been moved.
 An fanotify group that identifies filesystem objects by file handles
 is required.
+.TP
+.B FAN_MNT_ATTACH
+.TQ
+.BR FAN_MNT_DETACH " (both since Linux 6.14)"
+.\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
+Create an event when a mount was attached to or detached from a marked mount namespace, respectively.
+An attempt to set this flag on an inode, mount, or filesystem mark
+will result in the error
+.BR EINVAL .
+An fanotify group that was initialized with flag
+.B FAN_REPORT_MNT
+and the mark flag
+.B FAN_MARK_MNTNS
+are required.
+An additional information record of type
+.B FAN_EVENT_INFO_TYPE_MNT
+is returned with the event.
+See
+.BR fanotify (7)
+for additional details.
 .TP
 .BR FAN_FS_ERROR " (since Linux 5.16, 5.15.154, and 5.10.220)"
 .\" commit 9709bd548f11a092d124698118013f66e1740f9b
