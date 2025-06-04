@@ -100,7 +100,7 @@ If the filesystem object to be marked is not a directory, the error
 .B ENOTDIR
 shall be raised.
 .TP
-.BR FAN_MARK_MNTNS " (since Linux 6.14)"
+.BR FAN_MARK_MNTNS " (since Linux 6.15)"
 .\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
 Mark the mount namespace specified by
 .IR path .
@@ -412,7 +412,7 @@ is required.
 .TP
 .B FAN_MNT_ATTACH
 .TQ
-.BR FAN_MNT_DETACH " (both since Linux 6.14)"
+.BR FAN_MNT_DETACH " (both since Linux 6.15)"
 .\" commit 0f46d81f2bce970b1c562aa3c944a271bbec2729
 Create an event when
 a mount was attached to or detached from a marked mount namespace,
