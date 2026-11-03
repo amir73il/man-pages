@@ -605,7 +605,15 @@ can be:
 .B SIOCINQ
 For
 .B SOCK_STREAM
+and
+.B SOCK_SEQPACKET
 sockets, this call returns the number of unread bytes in the receive buffer.
+For
+.B SOCK_DGRAM
+sockets,
+this call returns size of the next pending datagram,
+or 0 when no datagram is pending.
+.IP
 The socket must not be in LISTEN state, otherwise an error
 .RB ( EINVAL )
 is returned.
@@ -625,13 +633,6 @@ defined in
 .\" That number is normally larger than the number of bytes of pending
 .\" output.  Since this info is, from userland's point of view, imprecise,
 .\" and it may well change, probably best not to document this now.
-For
-.B SOCK_DGRAM
-sockets,
-the returned value is the same as
-for Internet domain datagram sockets;
-see
-.BR udp (7).
 .SH ERRORS
 .TP
 .B EADDRINUSE
