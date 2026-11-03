@@ -296,8 +296,14 @@ if the sender did not specify
 .B SCM_CREDENTIALS
 ancillary data.
 .IP
-When this option is set and the socket is not yet connected,
-a unique name in the abstract namespace will be generated automatically.
+When this option is set on a socket that is not bound to an address,
+the socket is autobound to a unique name in the abstract namespace
+when
+.BR connect (2)
+or
+.BR sendmsg (2)
+is called on it;
+see "Autobind feature", below.
 .IP
 The value given as an argument to
 .BR setsockopt (2)
@@ -365,10 +371,18 @@ call specifies
 as
 .IR sizeof(sa_family_t) ,
 .\" i.e., sizeof(short)
-or the
+or if
+.BR connect (2)
+or
+.BR sendmsg (2)
+is called on a socket that was
+not explicitly bound to an address
+and that has the
 .B SO_PASSCRED
-socket option was specified for a socket that was
-not explicitly bound to an address,
+or
+.B SO_PASSPIDFD
+(since Linux 6.5)
+socket option enabled,
 then the socket is autobound to an abstract address.
 The address consists of a null byte
 followed by 5 bytes in the character set
