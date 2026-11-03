@@ -257,7 +257,17 @@ has no effect on the accessibility of the socket.
 Abstract sockets automatically disappear when all open references
 to the socket are closed.
 .P
-The abstract socket namespace is a nonportable Linux extension.
+A socket can connect or send to an abstract address
+only if the socket bound to that address
+is in the same network namespace
+(see
+.BR network_namespaces (7)).
+In contrast,
+pathname sockets are not confined to a network namespace;
+they can be reached from any network namespace
+in which the socket file is accessible.
+.P
+Abstract sockets are a nonportable Linux extension.
 .\"
 .SS Socket options
 For historical reasons, these socket options are specified with a
