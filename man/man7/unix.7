@@ -538,7 +538,24 @@ option must be enabled on the socket (see above).
 .P
 When sending ancillary data with
 .BR sendmsg (2),
-only one item of each of the above types may be included in the sent message.
+portable applications should include
+only one item of each of the above types in the sent message.
+On Linux,
+if several
+.B SCM_RIGHTS
+items are included,
+their file descriptors are combined into a single list,
+to which the
+.B SCM_MAX_FD
+limit applies as a whole,
+and the receiver gets them in a single
+.B SCM_RIGHTS
+item;
+if several
+.B SCM_CREDENTIALS
+items are included,
+each of them is checked,
+and the last one is sent.
 .P
 At least one byte of real data should be sent when sending ancillary data.
 On Linux, this is required to successfully send ancillary data over
