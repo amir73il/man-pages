@@ -47,55 +47,20 @@ Feature Test Macro Requirements for glibc (see
 .SH DESCRIPTION
 .BR crypt ()
 is the password hashing function.
-It is based on the Data Encryption
-Standard algorithm with variations intended (among other things) to
-discourage use of hardware implementations of a key search.
 .P
 .I key
 is a user's typed password.
 .P
 .I salt
-is a two-character string chosen from the set
-.RB [ a\-zA\-Z0\-9./ ].
-This string is used to
-perturb the algorithm in one of 4096 different ways.
+is a string
+used for determining the hashing algorithm
+(possibly including parameters).
+It is also used to perturb the algorithm.
 .P
-By taking the lowest 7 bits of each of the first eight characters of the
-.IR key ,
-a 56-bit key is obtained.
-This 56-bit key is used to encrypt repeatedly a
-constant string (usually a string consisting of all zeros).
 The returned
-value points to the hashed password, a series of 13 printable ASCII
-characters (the first two characters represent the salt itself).
+value points to the hashed password.
 The return value points to static data whose content is
 overwritten by each call.
-.P
-Warning: the key space consists of
-.if t 2\s-2\u56\s0\d
-.if n 2**56
-equal 7.2e16 possible values.
-Exhaustive searches of this key space are
-possible using massively parallel computers.
-Software, such as
-.BR crack (1),
-is available which will search the portion of this key space that is
-generally used by humans for passwords.
-Hence, password selection should,
-at minimum, avoid common words and names.
-The use of a
-.BR passwd (1)
-program that checks for crackable passwords during the selection process is
-recommended.
-.P
-The DES algorithm itself has a few quirks which make the use of the
-.BR crypt ()
-interface a very poor choice for anything other than password
-authentication.
-If you are planning on using the
-.BR crypt ()
-interface for a cryptography project, don't do it: get a good book on
-encryption and one of the widely available DES libraries.
 .P
 .BR crypt_r ()
 is a reentrant version of
@@ -122,40 +87,6 @@ The
 .BR crypt ()
 function was not implemented,
 probably because of U.S.A.\& export restrictions.
-.\" The following level of detail is not necessary in this man page.
-.\" .P
-.\" When encrypting a plain text P using DES with the key K results in the
-.\" encrypted text C, then the complementary plain text P' being encrypted
-.\" using the complementary key K' will result in the complementary encrypted
-.\" text C'.
-.\" .P
-.\" Weak keys are keys which stay invariant under the DES key transformation.
-.\" The four known weak keys 0101010101010101, fefefefefefefefe,
-.\" 1f1f1f1f0e0e0e0e and e0e0e0e0f1f1f1f1 must be avoided.
-.\" .P
-.\" There are six known half weak key pairs, which keys lead to the same
-.\" encrypted data.  Keys which are part of such key clusters should be
-.\" avoided.
-.\" Sorry, I could not find out what they are.
-.\""
-.\" .P
-.\" Heavily redundant data causes trouble with DES encryption, when used in the
-.\" .I codebook
-.\" mode that
-.\" .BR crypt ()
-.\" implements.  The
-.\" .BR crypt ()
-.\" interface should be used only for its intended purpose of password
-.\" verification, and should not be used as part of a data encryption tool.
-.\" .P
-.\" The first and last three output bits of the fourth S-box can be
-.\" represented as function of their input bits.  Empiric studies have
-.\" shown that S-boxes partially compute the same output for similar input.
-.\" It is suspected that this may contain a back door which could allow the
-.\" NSA to decrypt DES encrypted data.
-.\" .P
-.\" Making encrypted data computed using crypt() publicly available has
-.\" to be considered insecure for the given reasons.
 .TP
 .B EPERM
 .I /proc/sys/crypto/fips_enabled
@@ -187,6 +118,11 @@ POSIX.1-2008.
 .TP
 .BR crypt_r ()
 GNU.
+.P
+The POSIX specification of
+.BR crypt ()
+is outdated,
+and all systems extend it significantly.
 .SH HISTORY
 .TP
 .BR crypt ()
@@ -217,10 +153,7 @@ otherwise
 .I libxcrypt
 is an ABI-compatible drop-in replacement.
 .SH NOTES
-.SS Features in glibc
-The glibc version of this function supports additional
-hashing algorithms.
-.P
+.SS salt
 If
 .I salt
 is a character string starting with the characters
