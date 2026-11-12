@@ -259,6 +259,29 @@ is greater than 999999999, and
 is equal to
 .I xxx
 otherwise.
+.SH EXAMPLES
+When validating a password against an existing hash,
+that hash (and no other) must be passed as
+.IR salt .
+If and only if the string
+.I salt
+is equal
+(see
+.BR streq (3))
+to the returned string,
+the password matches the existing hash specified by
+.IR salt .
+.P
+.in +4n
+.EX
+const char  *h = crypt(P, H);
+if (h != NULL && streq(h, H)) {
+	// good password
+} else {
+	// bad password
+}
+.EE
+.in
 .SH SEE ALSO
 .BR login (1),
 .BR passwd (1),
