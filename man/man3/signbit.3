@@ -27,22 +27,11 @@ Feature Test Macro Requirements for glibc (see
     _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
 .fi
 .SH DESCRIPTION
+The
 .BR signbit ()
-is a generic macro which can work on all real floating-point types.
-It returns a nonzero value if the value of
+macro determines whether
 .I x
-has its sign bit set.
-.P
-This is not the same as
-.IR "x < 0.0" ,
-because IEEE 754 floating point allows zero to be signed.
-The comparison
-.I \-0.0\~<\~0.0
-is false, but
-.I signbit(\-0.0)
-will return a nonzero value.
-.P
-NaNs and infinities have a sign bit.
+has a negative sign.
 .SH RETURN VALUE
 The
 .BR signbit ()
@@ -74,5 +63,8 @@ POSIX.1-2001, C99.
 .P
 This function is defined in IEC 559 (and the appendix with
 recommended functions in IEEE 754/IEEE 854).
+.SH NOTES
+NaNs and zeros also may be positive or negative,
+and this macro works for them too.
 .SH SEE ALSO
 .BR copysign (3)
