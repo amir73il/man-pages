@@ -34,20 +34,20 @@ Feature Test Macro Requirements for glibc (see
         || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
 .fi
 .SH DESCRIPTION
-These functions return the mantissa of
+These functions return the significand
+(also known as mantissa)
+of
 .I x
-scaled to the range
-.RB [ 1 ,\~ FLT_RADIX ).
-They are equivalent to
+after normalization.
+.P
+.I significand(x)
+is equivalent to
 .P
 .in +4n
 .EX
-scalb(x, (double) \-ilogb(x))
+scalbn(x, \-ilogb(x))
 .EE
 .in
-.P
-This function exists mainly for use in certain standardized tests
-for IEEE 754 conformance.
 .SH ATTRIBUTES
 For an explanation of the terms used in this section, see
 .BR attributes (7).
